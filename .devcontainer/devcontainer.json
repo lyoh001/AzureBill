@@ -1,0 +1,25 @@
+{
+	"name": "Function Container",
+	"build": {
+		"dockerfile": "Dockerfile",
+	},
+	"settings": {
+		"terminal.integrated.profile.linux": "/bin/bash"
+	},
+	"extensions": [
+		"amazonwebservices.aws-toolkit-vscode",
+		"ms-azuretools.vscode-azurefunctions",
+		"ms-azuretools.vscode-azurelogicapps",
+		"ms-azuretools.vscode-azureresourcegroups",
+		"ms-azuretools.vscode-azurestaticwebapps",
+		"ms-azuretools.vscode-bicep",
+		"ms-dotnettools.vscode-dotnet-runtime",
+		"ms-python.python",
+		"ms-vscode.azure-account",
+		"sourcery.sourcery",
+		"visualstudioexptteam.vscodeintellicode"
+	],
+	"forwardPorts": [
+		10000
+	]
+}

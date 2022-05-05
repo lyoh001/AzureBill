@@ -1,0 +1,27 @@
+name: Azure Bicep
+on: [push]
+
+env:
+  AZURE_SUBSCRIPTION: ${{ secrets.SUBSCRIPTION_ID }}
+  AZURE_DEPLOYMENT_NAME: "azureaadrolesall"
+  AZURE_DEPLOYMENT_REGION: "australiaeast"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout GitHub Action
+      uses: actions/checkout@main
+   
+    - name: Run Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        allow-no-subscriptions: true
+
+    - name: Run Azure Bicep Deploy
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az account set --subscription ${{ env.AZURE_SUBSCRIPTION }}
+          az deployment sub create -f ./main.bicep -n ${{ env.AZURE_DEPLOYMENT_NAME }} -l ${{ env.AZURE_DEPLOYMENT_REGION }} -p token=${{ secrets.GIT_HUB_CREDENTIALS }}

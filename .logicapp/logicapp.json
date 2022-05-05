@@ -1,0 +1,107 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Initialize_variable": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "email_body",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Send_an_email_(V2)": {
+                "inputs": {
+                    "body": {
+                        "Attachments": [
+                            {
+                                "ContentBytes": "@{base64(triggerBody()?['html'])}",
+                                "Name": "aad_roles_charts.html"
+                            },
+                            {
+                                "ContentBytes": "@{base64(triggerBody()?['csv'])}",
+                                "Name": "aad_roles_report.csv"
+                            }
+                        ],
+                        "Bcc": "",
+                        "Body": "<p>@{variables('email_body')}</p>",
+                        "Subject": "O365 Process Reports (Azure weekly AAD Roles report for all VICGOV staff)",
+                        "To": ""
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['office365']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/v2/Mail"
+                },
+                "runAfter": {
+                    "Set_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Set_variable": {
+                "inputs": {
+                    "name": "email_body",
+                    "value": "<!DOCTYPE html>\n<html>\n<style>\n    .notification-table-header {\n        width: 590px;\n        border-top: none;\n        background: #1170a4;\n        font-size: 11.0pt;\n        color: white;\n        font-weight: bold;\n        margin-left: 10px;\n        text-align: left;\n        border: none;\n        border-bottom: solid white 1.5pt;\n    }\n\n    .notification-table-text {\n        margin-left: 5px;\n        width: 70%;\n        text-align: left;\n        border: none;\n        border-bottom: solid white 1.5pt;\n        background: #F2F2F2;\n        font-size: 12.0pt;\n        height: 20.05pt;\n    }\n\n    .notification-card-footer span {\n        font-size: 12.0pt;\n        color: #7F7F7F;\n    }\n\n    .notification-card-footer p {\n        vertical-align: baseline;\n    }\n\n    .notification-body {\n        margin: 0 auto;\n        text-align: center;\n        width: 650px;\n        border: 1px black;\n        border-collapse: collapse;\n        background-color: #b6dbeb;\n    }\n</style>\n\n<body style='background-color: #dfdfdf;'>\n    <table align='center' style='width:100%;'>\n        <tr>\n            <td align='center' style='padding:0;'>\n                <div align='center'>\n                    <table align='left' class='notification-body'>\n                        <tr style='border: 1px grey; border-top:none; align-self: center;'>\n                            <td align='center'>\n                                <p style='font-size:5.0pt;'>\n                                    <span>&nbsp;</span>\n                                </p>\n                                <table align='center' style='width:595px;margin:0'>\n                                    <tr style='height:20.05pt'>\n                                        <td align='center' colspan='2' class='notification-table-header'\n                                            style='width:100%;'>\n                                            <img src='data:image/png;base64,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'\n                                                style='vertical-align: bottom;' width='100%' height='100%' />\n                                        </td>\n                                    </tr>\n                                </table>\n                                <table align='center' style='width:595px;margin:0'>\n                                    <tr style='height:20.05pt'>\n                                        <td align='center' colspan='2' class='notification-table-header'\n                                            style='width:100%; height:20.05pt'>\n                                            <p style='text-align:center; font-size:16.0pt;'><b>Azure weekly AAD Roles\n                                                    Report</b><br />&nbsp;</p>\n                                        </td>\n                                    </tr>\n                                    <tr class='notification-card-footer'>\n                                        <td align='center' colspan='2'>\n                                            </br></br>\n                                            <p style='text-align:left;'><b>Azure weekly AAD Roles report for all VICGOV\n                                                    staff has been generated successfully.</b></p>\n                                            <p style='text-align:left;'>More details here: </p>\n                                        </td>\n                                    </tr>\n                                    <tr>\n                                        <td align='center' class='notification-table-header'>\n                                            <span>&nbsp; Date:</span>\n                                        </td>\n                                        <td align='center' class='notification-table-text'>@{triggerBody()?['time']}\n                                        </td>\n                                    </tr>\n                                    <tr>\n                                        <td align='center' class='notification-table-header'>\n                                            <span>&nbsp; Message:</span>\n                                        </td>\n                                        <td align='center' class='notification-table-text'>Please see the attachments\n                                            for the detailed\n                                            charts and reports.</td>\n                                    </tr>\n                                    <tr class='notification-card-footer'>\n                                        <td align='center' colspan='2'>\n                                            <p style='text-align:center;'>\n                                            </p>\n                                            <img src=data:image/jpeg;base64,@{triggerBody()?['graph']}>\n                                        </td>\n                                    </tr>\n                                    <tr class='notification-card-footer'>\n                                        <td align='center' colspan='2'>\n                                            <p style='text-indent:36.0pt;'>\n                                                <span style='font-size:0.0pt;'>&nbsp;</span>\n                                            </p>\n                                            <p style='text-align:center;'>\n                                                <b>\n                                                    <span style='font-size:16.0pt;'>Cenitex</span>\n                                                </b>\n                                            </p>\n                                            <p style='text-align:center;'>\n                                                <span>Feedback:\n                                                    <a href='mailto:john.lee@cenitex.vic.gov.au' target='_blank'>\n                                                        <span\n                                                            style='font-size:11.0pt;color:#1170a4;'>john.lee@cenitex.vic.gov.au</span>\n                                                    </a>\n                                                </span>\n                                                <br />&nbsp;\n                                            </p>\n                                        </td>\n                                    </tr>\n                                </table>\n                            </td>\n                        </tr>\n                    </table>\n                </div>\n            </td>\n        </tr>\n    </table>\n</body>\n\n</html>"
+                },
+                "runAfter": {
+                    "Initialize_variable": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "SetVariable"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "manual": {
+                "inputs": {
+                    "schema": {
+                        "properties": {
+                            "csv": {
+                                "type": "string"
+                            },
+                            "graph": {
+                                "type": "string"
+                            },
+                            "html": {
+                                "type": "string"
+                            },
+                            "time": {
+                                "type": "string"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "office365": {
+                    "connectionId": "",
+                    "connectionName": "office365",
+                    "id": ""
+                }
+            }
+        }
+    }
+}
